@@ -1,5 +1,7 @@
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/types.h>
 
 // https://bsonspec.org/spec.html
@@ -16,8 +18,6 @@
 // 0x6e 0x61 0x6d 0x65 0x00
 // 0x06 0x00 0x00 0x00 0x68 0x65 0x6c 0x6c 0x6f 0x00
 // 0x00
-//
-//
 // 0x0f 0x00 0x00 0x00
 // 0x10
 // 0x6e 0x61 0x6d 0x65 0x00 0x63 0x00 0x00 0x00
@@ -37,6 +37,7 @@
 // 0x03 0x00 0x00 0x00
 //    3
 // 0x00
+
 struct bson_element {
   uint8_t type;  
 
@@ -44,11 +45,31 @@ struct bson_element {
 
 struct bson_document {
     uint32_t size;
+    uint8_t type;  
     struct bson_element *list;
 };
 
+bool bson_validate_bracket(const char *json, int json_length)
+{
+    int brackets = 0;
+    for( int i = 0; i < json_length; i++)
+    {
+        if (json[i] == '{') brackets++;
+        if (json[i] == '}') brackets--;
+    }
+
+    return brackets != 0;
+}
+
 void bson_create(const char *json)
 {
+    int json_length = strlen(json);
+
+    if (bson_validate_bracket(json, json_length))
+    {
+        printf("Fail to valid json structure");
+        return;
+    }
     printf(json);
 }
 
