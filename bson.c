@@ -39,14 +39,14 @@
 // 0x00
 
 struct bson_element {
-  uint8_t type;  
-
+    uint8_t type;  
+    void *value;
+    // *value could be just int32 or (int32 + str * size)
 };
 
 struct bson_document {
-    uint32_t size;
-    uint8_t type;  
-    struct bson_element *list;
+    uint32_t size; // in bytes
+    struct bson_element *elements;
 };
 
 bool bson_validate_bracket(const char *json, int json_length)
@@ -70,6 +70,8 @@ void bson_create(const char *json)
         printf("Fail to valid json structure");
         return;
     }
+
+
     printf(json);
 }
 
